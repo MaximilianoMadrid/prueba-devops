@@ -1,0 +1,16 @@
+services:
+
+  frontend:
+    build: ./front_despacho
+    ports:
+      - "4173:4173"
+
+  backend-ventas:
+    build: ./back-Ventas_SpringBoot/Springboot-API-REST
+    ports:
+      - "8080:8080"
+
+  backend-despachos:
+    build: ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+    ports:
+      - "8081:8080"
