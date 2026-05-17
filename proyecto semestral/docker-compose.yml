@@ -1,7 +1,7 @@
 services:
-
   frontend:
     build: ./front_despacho
+    command: npm run dev -- --host 0.0.0.0 --port 4173
     ports:
       - "4173:4173"
 
@@ -9,8 +9,21 @@ services:
     build: ./back-Ventas_SpringBoot/Springboot-API-REST
     ports:
       - "8080:8080"
+    env_file:
+      - .env
 
   backend-despachos:
     build: ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
     ports:
       - "8081:8080"
+    env_file:
+      - .env
+
+  proyecto-db:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: proyecto_db
+    ports:
+      - "3306:3306"
