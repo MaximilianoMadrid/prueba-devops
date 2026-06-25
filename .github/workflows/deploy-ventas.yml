@@ -36,8 +36,8 @@ jobs:
         ECR_REPOSITORY: prueba-ventas
         IMAGE_TAG: latest
       run: |
-        # Entra a la carpeta exacta de tu microservicio
-        cd "proyecto semestral/back-Ventas_SpringBoot"
+        # Entra a la subcarpeta exacta donde está el Dockerfile de ventas
+        cd "proyecto semestral/back-Ventas_SpringBoot/Springboot-API-REST"
         
         # Construye la imagen usando tu Dockerfile
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
