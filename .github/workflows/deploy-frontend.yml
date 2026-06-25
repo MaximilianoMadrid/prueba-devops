@@ -1,0 +1,55 @@
+name: Deploy Frontend a ECR y EKS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**' # ¡Ajusta esto al nombre real de tu carpeta del frontend!
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+
+    # 1. Autenticación en AWS (Versión Academy con Session Token)
+    - name: Configurar Credenciales de AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # 2. Login en tu repositorio de imágenes (ECR)
+    - name: Login en Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    # 3. Construir, Etiquetar y Subir la imagen de Docker
+    - name: Build, tag, and push image to ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: prueba-frontend
+        IMAGE_TAG: latest
+      run: |
+        # Entra a la carpeta de tu frontend (Ajusta 'frontend' si tu carpeta se llama distinto)
+        cd frontend
+        
+        # Construye la imagen usando tu Dockerfile
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        
+        # Sube la imagen a AWS
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    # 4. Actualizar Kubernetes (EKS)
+    - name: Actualizar EKS
+      run: |
+        # Conecta la terminal de GitHub con tu clúster de Kubernetes
+        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name prueba-devops-eks
+        
+        # Obliga a Kubernetes a descargar la nueva imagen y reiniciar los pods del frontend
+        kubectl rollout restart deployment frontend -n smartlogix

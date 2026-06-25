@@ -1,0 +1,55 @@
+name: Deploy Microservicio Despachos a ECR y EKS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ms-despachos/**' # Se ejecuta solo si hay cambios en la carpeta de despachos
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+
+    # 1. Autenticación en AWS (Versión Academy con Session Token)
+    - name: Configurar Credenciales de AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # 2. Login en tu repositorio de imágenes (ECR)
+    - name: Login en Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    # 3. Construir, Etiquetar y Subir la imagen de Docker
+    - name: Build, tag, and push image to ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: prueba-despachos
+        IMAGE_TAG: latest
+      run: |
+        # Entra a la carpeta de tu microservicio de despachos
+        cd ms-despachos
+        
+        # Construye la imagen usando tu Dockerfile
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        
+        # Sube la imagen a AWS
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    # 4. Actualizar Kubernetes (EKS)
+    - name: Actualizar EKS
+      run: |
+        # Conecta la terminal de GitHub con tu clúster de Kubernetes
+        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name prueba-devops-eks
+        
+        # Obliga a Kubernetes a descargar la nueva imagen y reiniciar los pods de despachos
+        kubectl rollout restart deployment despachos -n smartlogix
