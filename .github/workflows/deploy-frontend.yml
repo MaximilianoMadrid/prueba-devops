@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'frontend/**' # ¡Ajusta esto al nombre real de tu carpeta del frontend!
+      - 'proyecto semestral/front_despacho/**' # ¡Ajusta esto al nombre real de tu carpeta del frontend!
 
 jobs:
   build-and-deploy:
@@ -36,8 +36,8 @@ jobs:
         ECR_REPOSITORY: prueba-frontend
         IMAGE_TAG: latest
       run: |
-        # Entra a la carpeta de tu frontend (Ajusta 'frontend' si tu carpeta se llama distinto)
-        cd frontend
+        # Entra a la carpeta exacta de tu microservicio
+        cd "proyecto semestral/front_despacho"
         
         # Construye la imagen usando tu Dockerfile
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .

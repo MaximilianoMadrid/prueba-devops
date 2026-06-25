@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'ms-despachos/**' # Se ejecuta solo si hay cambios en la carpeta de despachos
+      - 'proyecto semestral/back-Despachos_SpringBoot/**' # Se ejecuta solo si hay cambios en la carpeta de despachos
 
 jobs:
   build-and-deploy:
@@ -36,8 +36,8 @@ jobs:
         ECR_REPOSITORY: prueba-despachos
         IMAGE_TAG: latest
       run: |
-        # Entra a la carpeta de tu microservicio de despachos
-        cd ms-despachos
+        # Entra a la carpeta exacta de tu microservicio
+        cd "proyecto semestral/back-Despachos_SpringBoot"
         
         # Construye la imagen usando tu Dockerfile
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .

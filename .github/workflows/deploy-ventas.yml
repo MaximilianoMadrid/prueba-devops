@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'ms-ventas/**' # Se ejecuta solo si hay cambios en la carpeta de ventas
+      - 'proyecto semestral/back-Ventas_SpringBoot/**' # Se ejecuta solo si hay cambios en la carpeta de ventas
 
 jobs:
   build-and-deploy:
@@ -36,8 +36,8 @@ jobs:
         ECR_REPOSITORY: prueba-ventas
         IMAGE_TAG: latest
       run: |
-        # Entra a la carpeta de tu microservicio (Ajusta 'ms-ventas' si tu carpeta se llama distinto)
-        cd ms-ventas
+        # Entra a la carpeta exacta de tu microservicio
+        cd "proyecto semestral/back-Ventas_SpringBoot"
         
         # Construye la imagen usando tu Dockerfile
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
