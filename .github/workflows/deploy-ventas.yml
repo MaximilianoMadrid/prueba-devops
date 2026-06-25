@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'proyecto semestral/back-Ventas_SpringBoot/**' # Se ejecuta solo si hay cambios en la carpeta de ventas
+      - 'proyecto semestral/back-Ventas_SpringBoot/Springboot-API-REST/**' # Se ejecuta solo si hay cambios en la carpeta de ventas
 
 jobs:
   build-and-deploy:
