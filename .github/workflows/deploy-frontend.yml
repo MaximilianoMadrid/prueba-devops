@@ -53,3 +53,6 @@ jobs:
         
         # Obliga a Kubernetes a descargar la nueva imagen y reiniciar los pods del frontend
         kubectl rollout restart deployment frontend -n smartlogix
+
+
+    #mensaje
